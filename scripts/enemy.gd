@@ -7,15 +7,20 @@ extends PathFollow3D
 func _process(delta):
 	move(delta)
 	if (self.health <= 0):
-		self.get_parent().remove_child(self)
+		queue_free()
 	
 func move(delta):
 	self.progress += delta * speed
 
 
+
 func _on_area_3d_area_entered(area):
-	var main = get_node("/root/main")
+	
+	if (area.is_in_group("projectile")):
+		health -= 1
+	
 	if (area.name == "CastleArea"):
-		var newLives = main.get_meta('Lives') - 1
+		var main = get_node("/root/main")
+		var newLives = main.get_meta('Lives') - damage
 		main.set_meta("Lives", newLives)
 		get_parent().remove_child(self)
